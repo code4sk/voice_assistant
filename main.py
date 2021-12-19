@@ -57,12 +57,15 @@ with sr.Microphone() as source:
                 except Exception as e:
                     print("ok")
                     # s = random.choice(e.options)
-                    s = e.options[0]
-                    results = wikipedia.page(s)
-                    speak("This is what i found on Wikipedia")
-                    speak(results.title)
-                    speak(results.content[:250])
-                    link = results.links[0]
+                    if len(e.options) > 0:
+                        s = e.options[0]
+                        results = wikipedia.page(s)
+                        speak("This is what i found on Wikipedia")
+                        speak(results.title)
+                        speak(results.content[:250])
+                        link = results.links[0]
+                    else:
+                        speak("No result found on Wikipedia")
                 # print(link)
             elif 'open youtube' in text:
                 webbrowser.open_new_tab("https://www.youtube.com")
@@ -74,7 +77,7 @@ with sr.Microphone() as source:
                 time.sleep(2)
 
             elif 'open gmail' in text:
-                webbrowser.open_new_tab("mail.google.com")
+                webbrowser.open_new_tab("https://mail.google.com")
                 speak("Google Mail open now")
                 time.sleep(2)
             elif 'open news' in text:
@@ -83,11 +86,24 @@ with sr.Microphone() as source:
                 time.sleep(2)
             elif 'search'  in text:
                 text = text.split("search")[1]
-                base_url = "http://www.google.com/search?q="
+                base_url = "https://www.google.com/search?q="
                 query = text
                 final_url = base_url + query.replace(" ","%20")
                 webbrowser.open_new_tab(final_url)
                 time.sleep(2)
+            elif 'bob' in text:
+                engine.setProperty('voice', engine.getProperty('voices')[0].id)
+                try:
+                    text = text.split("bob")[1]
+                    app_id = "VKYJYH-YVYV2X93QW"
+                    client = wolframalpha.Client('R2K75H-7ELALHR35X')
+                    res = client.query(text)
+                    answer = next(res.results).text
+                    speak(answer)
+                    print(answer)
+                except:
+                    speak("Sorry no idea!")
+                engine.setProperty('voice', engine.getProperty('voices')[1].id)
             else:
                 speak(text)
                 
