@@ -10,80 +10,31 @@ import wolframalpha
 import json
 import requests
 import random
-
-engine=pyttsx3.init('sapi5')
-engine.setProperty('voice', engine.getProperty('voices')[1].id)
+import pyjokes
+from speak_engine import speak, bring_in_bob, bring_in_alice
+from open import open
+from wiki import wiki
+from microphone import takeInput
+from weather_api import weather_forcast
 
 link = ""
 
-def speak(text):
-    engine.say(text)
-    engine.runAndWait()
+
 
 # speak("Hello, this is just the begining")
 
 
 with sr.Microphone() as source:
-    def takeInput():
-        while True:
-            try:
-                r = sr.Recognizer()
-                # r.adjust_for_ambient_noise(source)
-                audio = r.listen(source)
-                command = r.recognize_google(audio, language='en-in')
-                return command
-            except Exception as e:
-                # print("hello")
-                continue
-        return "null"
 
 
     def listen():
         while True:
-            text = takeInput().lower()
+            text = takeInput(source).lower()
             print(text)
             if 'wikipedia' in text:
-                speak('Searching Wikipedia...')
-                # text = text.replace("wikipedia", "0000")
-                text = text.split("wikipedia")[1]
-                text = text.lstrip()
-                print(text)
-                try:
-                    results = wikipedia.summary(text, sentences=3, auto_suggest=False)
-                    speak("According to Wikipedia")
-                    print(results)
-                    speak(results)
-                    # link = wikipedia.page(text).links[0]
-                except Exception as e:
-                    print("ok")
-                    # s = random.choice(e.options)
-                    if len(e.options) > 0:
-                        s = e.options[0]
-                        results = wikipedia.page(s)
-                        speak("This is what i found on Wikipedia")
-                        speak(results.title)
-                        speak(results.content[:250])
-                        link = results.links[0]
-                    else:
-                        speak("No result found on Wikipedia")
-                # print(link)
-            elif 'open youtube' in text:
-                webbrowser.open_new_tab("https://www.youtube.com")
-                speak("youtube is open now")
-                time.sleep(2)
-            elif 'open google' in text:
-                webbrowser.open_new_tab("https://www.google.com")
-                speak("Google chrome is open now")
-                time.sleep(2)
-
-            elif 'open gmail' in text:
-                webbrowser.open_new_tab("https://mail.google.com")
-                speak("Google Mail open now")
-                time.sleep(2)
-            elif 'open news' in text:
-                news = webbrowser.open_new_tab("https://timesofindia.indiatimes.com/home/headlines")
-                speak('Here are some headlines from the Times of India,Happy reading')
-                time.sleep(2)
+                wiki(text)
+            elif 'open' in text:
+                open(text)
             elif 'search'  in text:
                 text = text.split("search")[1]
                 base_url = "https://www.google.com/search?q="
@@ -92,7 +43,7 @@ with sr.Microphone() as source:
                 webbrowser.open_new_tab(final_url)
                 time.sleep(2)
             elif 'bob' in text:
-                engine.setProperty('voice', engine.getProperty('voices')[0].id)
+                bring_in_bob()
                 try:
                     text = text.split("bob")[1]
                     app_id = "VKYJYH-YVYV2X93QW"
@@ -103,11 +54,18 @@ with sr.Microphone() as source:
                     print(answer)
                 except:
                     speak("Sorry no idea!")
-                engine.setProperty('voice', engine.getProperty('voices')[1].id)
+                bring_in_alice()
+
+            elif "weather" in text:
+                weather_forcast(text, source)
+            elif 'joke' in text:
+                joke = pyjokes.get_joke()
+                print(joke)
+                speak(joke)   
             else:
                 speak(text)
                 
-    speak("what is today's date")
+    speak("welcome")
     print("start")
     listen()
 
