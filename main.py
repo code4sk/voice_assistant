@@ -23,14 +23,26 @@ link = ""
 
 # speak("Hello, this is just the begining")
 
+hibernate = False
 
 with sr.Microphone() as source:
-
 
     def listen():
         while True:
             text = takeInput(source).lower()
             print(text)
+            global hibernate
+            if "hibernate" in text:
+                hibernate = True
+                speak("Ok understood, I am hibernating now")
+                continue
+            if "wake up" in text:
+                hibernate = False
+                speak("I am awake now, you can ask me anything")
+                continue
+            if hibernate:
+                continue
+
             if 'wikipedia' in text:
                 wiki(text)
             elif 'open' in text:

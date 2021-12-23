@@ -4,7 +4,7 @@ def takeInput(source):
         while True:
             try:
                 r = sr.Recognizer()
-                # r.adjust_for_ambient_noise(source)
+                r.adjust_for_ambient_noise(source)
                 audio = r.listen(source)
                 # print(audio)
                 command = r.recognize_google(audio, language='en-in')
